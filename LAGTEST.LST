@@ -1,0 +1,87 @@
+' video lag testing tool
+' blastsnes 2020
+'
+' medium res check
+'
+rez%=XBIOS(4)
+IF rez%<>1 THEN
+  ALERT 1,"Please restart in med. res.",3,"OK",v
+  EDIT
+ENDIF
+'
+' switch to supervisor mode to write to protected regs
+'
+supervisor%=GEMDOS(32,L:0)
+'
+' save the current palette
+'
+basepal$=SPACE$(32)
+BMOVE &HFFFF8240,V:basepal$,32
+'
+CLS
+HIDEM
+x%=510
+y%=24
+docy%=72
+spacey%=160
+SETCOLOR 0,1,4,7
+SETCOLOR 1,7,7,7
+SETCOLOR 2,5,6,6
+SETCOLOR 3,2,1,7
+DEFTEXT 4,,,6
+TEXT 0,8,"Video Lag Tester - blastsnes 2020"
+DEFTEXT 3,,,6
+TEXT 0,docy%+0,"How to:"
+TEXT 0,docy%+16,"- capture the screen and the floppy led at the same time at a high framerate"
+TEXT 0,docy%+24,"  (ex: smartphone 240 fps slowmo) for a couple of seconds"
+TEXT 0,docy%+40,"- analyze the video frame by frame until the led turns on"
+TEXT 0,docy%+56,"- the counter in the top right of the screen will give you the lag"
+TEXT 0,spacey%,"Press space to leave."
+DEFTEXT 2,,,6
+TEXT x%+20,y%,"frames of lag"
+f%=0
+hv%=0
+POKE &HFF8800,14
+p%=PEEK(&HFF8800)
+on%=0
+onval%=p% AND 253
+offval%=p% OR 2
+DO
+  VSYNC
+  ' SETCOLOR 0,1,4,7         !to debug our frame budget
+  IF f%<30 THEN
+    TEXT x%,y%,STR$(30-hv%,2)
+  ENDIF
+  ' SETCOLOR 0,0,0,7         !to debug our frame budget
+  IF hv%=0 THEN
+    IF on% AND 1 THEN
+      TEXT x%,y%," 0"
+      POKE &HFF8802,onval%
+    ELSE
+      POKE &HFF8802,offval%
+    ENDIF
+    on%=NOT on%
+  ENDIF
+  EXIT IF INKEY$=" "
+  f%=f%+1
+  IF f%=60 THEN            !modulus is a slow op
+    f%=0
+  ENDIF
+  hv%=hv%+1
+  IF hv%=30 THEN            !modulus is a slow op
+    hv%=0
+  ENDIF
+LOOP
+'
+out:
+'
+' restore the original palette
+'
+BMOVE V:basepal$,&HFFFF8240,32
+'
+' back to user mode
+'
+~GEMDOS(32,L:supervisor%)
+'
+SHOWM
+EDIT
