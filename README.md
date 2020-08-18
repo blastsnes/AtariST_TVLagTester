@@ -8,4 +8,6 @@ Please take a look at the screen capture below which includes a short documentat
 
 ![Screen capture of Atari ST running the utility](https://raw.githubusercontent.com/blastsnes/AtariST_TVLagTester/master/doc/screen-capture.png)
 
+Note: on a MiSTer FPGA, the diode that will blink is the orange one (User LED).
+
 ~blastsnes
