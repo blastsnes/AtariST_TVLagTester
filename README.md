@@ -1,4 +1,4 @@
-# atari-st-lag-test
+# Atari ST Video Lag Tester
 Quick tool to analyse the input lag of a TV / Monitor from a real Atari ST or FPGA.
 
 A zip containing the Atari ST disk image (.ST file format) can be dowloaded from the [releases](https://github.com/blastsnes/AtariST_TVLagTester/releases/tag/v1.0) section.
